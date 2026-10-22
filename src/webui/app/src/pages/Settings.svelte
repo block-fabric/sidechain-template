@@ -23,17 +23,17 @@
   import { frame } from '../lib/windowframe.svelte';
   import { LOCAL_SETTINGS_TABS } from '../chain/settings';
   import LocalSettings from '../chain/LocalSettings.svelte';
+  import { KIT_NODE_OPTIONS } from '../chain/overrides';
 
   // Appearance first: the look, the layout and the title bar (doc/webui-layouts.md).
   const TABS = [
     { id: 'display', label: 'Appearance' },
     { id: 'theme', label: 'Advanced theme' },
-    { id: 'main', label: 'Main' },
-    { id: 'wallet', label: 'Wallet' },
-    { id: 'network', label: 'Network' },
+    // The options of the kit's node (a chain of another node family has its own, chain/overrides.ts).
+    ...(KIT_NODE_OPTIONS ? [{ id: 'main', label: 'Main' }, { id: 'wallet', label: 'Wallet' }, { id: 'network', label: 'Network' }] : []),
     { id: 'window', label: 'Window' },
     // A sidechain: the connection to its mainchain node.
-    ...(SIDECHAIN ? [{ id: 'mainchain', label: CHAIN.mainchain?.name ?? 'Mainchain' }] : []),
+    ...(SIDECHAIN && KIT_NODE_OPTIONS ? [{ id: 'mainchain', label: CHAIN.mainchain?.name ?? 'Mainchain' }] : []),
     // The chain's own (chain/settings.ts): BitAssets' Asset filters.
     ...LOCAL_SETTINGS_TABS,
   ];

@@ -21,6 +21,7 @@
   import LocalPages from '../chain/LocalPages.svelte';
   import { SIDECHAIN } from '../chain/config';
   import { LOCAL_PAGES } from '../chain/local';
+  import { LOCAL_OVERRIDES } from '../chain/overrides';
   import { chainHas } from '../lib/commands.svelte';
   import { nav, PAGES } from '../lib/nav.svelte';
   import { wallets, walletsEnabled } from '../lib/state.svelte';
@@ -31,10 +32,14 @@
   const page = $derived(PAGES[nav.page]);
   /** A page of the chain of its own (chain/local.ts). */
   const local = $derived(LOCAL_PAGES.some((p: { id: string }) => p.id === nav.page));
+  /** A page of the kit this chain draws itself (chain/overrides.ts); a page it does not have shows its overview. */
+  const overridden = $derived(LOCAL_OVERRIDES.includes(chainHas(nav.page) ? nav.page : 'overview') ? (chainHas(nav.page) ? nav.page : 'overview') : null);
 </script>
 
 {#key nav.page}
-  {#if !chainHas(nav.page)}
+  {#if overridden}
+    <LocalPages page={overridden} />
+  {:else if !chainHas(nav.page)}
     <!-- A page of the kit this chain does not have (chain.json: drop): the overview instead. -->
     <Overview />
   {:else if nav.page === 'home'}
